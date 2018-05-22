@@ -1,0 +1,214 @@
+<Project>
+  <Name>EVA.Lotion Klassen Diagramm</Name>
+  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
+    <Name>EVA.Lotion</Name>
+    <Language>CSharp</Language>
+    <Entities>
+      <Entity type="Class">
+        <Name>LoginAdmin</Name>
+        <Access>Public</Access>
+        <Location left="574" top="245" />
+        <Size width="200" height="151" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">private Lehrer neueLeherAnlegen()</Member>
+        <Member type="Method">private List&lt;String&gt; umfragenAnzeigen()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>LoginSchüler</Name>
+        <Access>Public</Access>
+        <Location left="1403" top="986" />
+        <Size width="217" height="151" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">private void füllungDesFragebogens()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Login</Name>
+        <Access>Public</Access>
+        <Location left="820" top="12" />
+        <Size width="269" height="179" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private String benutzerName</Member>
+        <Member type="Field">private String Password</Member>
+        <Member type="Method">public String getBenutzerName()</Member>
+        <Member type="Method">public String getPassword()</Member>
+        <Member type="Method">public void setBenutzerName(String benutzername)</Member>
+        <Member type="Method">public void setPassword(String password)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>ListenAnsicht</Name>
+        <Access>Public</Access>
+        <Location left="289" top="397" />
+        <Size width="165" height="110" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">list&lt;String&gt; umfragenListe</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>UmfrageErstellen</Name>
+        <Access>Public</Access>
+        <Location left="752" top="458" />
+        <Size width="162" height="145" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private String umfrage</Member>
+        <Member type="Method">public String createUmfrage(String umfrage)</Member>
+        <Member type="Method">public String getUmfrage()</Member>
+        <Member type="Method">public void setUmfrage(String umfrage)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>UmfrageBearbeiten</Name>
+        <Access>Public</Access>
+        <Location left="752" top="689" />
+        <Size width="162" height="125" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private String alteUmfrage</Member>
+        <Member type="Method">public void umfrageBearbeiten()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>UmfrageEinsehen</Name>
+        <Access>Public</Access>
+        <Location left="976" top="1019" />
+        <Size width="216" height="118" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public void füllungDesFragenbogens()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>FragenPool</Name>
+        <Access>Public</Access>
+        <Location left="1441" top="241" />
+        <Size width="162" height="131" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private List&lt;String&gt; umfrageListe</Member>
+        <Member type="Method">public void showAll()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Lehrer</Name>
+        <Access>Public</Access>
+        <Location left="248" top="194" />
+        <Size width="221" height="187" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private String name</Member>
+        <Member type="Field">private String nachName</Member>
+        <Member type="Method">public String getName()</Member>
+        <Member type="Method">public String getNachName()</Member>
+        <Member type="Method">public void setName(String name)</Member>
+        <Member type="Method">public void setNachName(String nachname)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>LoginLehrer</Name>
+        <Access>Public</Access>
+        <Location left="1093" top="328" />
+        <Size width="201" height="166" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">private void umfrageErstellen()</Member>
+        <Member type="Method">private void umfrageBearbeiten()</Member>
+        <Member type="Method">private void umfrageVerschicken()</Member>
+        <Member type="Method">private void getFragenPool()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>UmfrageVerschicken</Name>
+        <Access>Public</Access>
+        <Location left="1441" top="598" />
+        <Size width="162" height="176" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">private void UmfrageVerschichkt()</Member>
+        <Member type="Method">public void getKlassenList()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>AlleKlassen</Name>
+        <Access>Public</Access>
+        <Location left="1236" top="803" />
+        <Size width="162" height="147" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private List&lt;String&gt; klassen</Member>
+        <Member type="Method">public List&lt;String&gt; getKlassenList()</Member>
+        <Member type="Method">public void setKlassenList(List&lt;String&gt; klassen)</Member>
+        <Member type="Method">public void addKlasse(String klasse)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+    </Entities>
+    <Relationships>
+      <Relationship type="Association" first="2" second="0">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="0" second="8">
+        <Label>
+        </Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Aggregation</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="0" second="3">
+        <Label>
+        </Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Aggregation</AssociationType>
+      </Relationship>
+      <Relationship type="Generalization" first="1" second="6">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+      </Relationship>
+      <Relationship type="Association" first="2" second="9">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Dependency" first="10" second="11">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+      </Relationship>
+      <Relationship type="Association" first="9" second="4">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Aggregation</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="9" second="10">
+        <Label>
+        </Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Aggregation</AssociationType>
+      </Relationship>
+      <Relationship type="Dependency" first="4" second="5">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+      </Relationship>
+      <Relationship type="Nesting" first="9" second="7">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+      </Relationship>
+      <Relationship type="Nesting" first="10" second="1">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+    </Relationships>
+  </ProjectItem>
+</Project>
