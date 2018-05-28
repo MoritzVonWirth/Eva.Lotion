@@ -20,6 +20,7 @@ class CreateQuestionsTable extends Migration
             $table->integer('possible_answers')->nullable();
             $table->integer('type')->nullable();
             $table->integer('answers')->nullable();
+            $table->tinyInteger('public')->default(0);
             $table->timestamps();
         });
     }

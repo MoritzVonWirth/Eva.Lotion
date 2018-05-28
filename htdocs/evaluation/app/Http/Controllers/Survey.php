@@ -62,7 +62,9 @@ class Survey extends Controller
      */
     public function editSurvey($id) {
         $survey = \App\Survey::find($id)->surveyToArray();
-        return view('Survey/editSurvey', array('survey' => $survey));
+        $questionsFromQuestionPool = new \App\Question();
+        $questionsFromQuestionPool = $questionsFromQuestionPool->getAllPublic();
+        return view('Survey/editSurvey', array('survey' => $survey, 'questionsFromQuestionPool' => $questionsFromQuestionPool));
     }
 
     public function updateSurvey(Request $request)
@@ -70,17 +72,23 @@ class Survey extends Controller
         $survey = $request['survey'];
         $command = $request['command'];
         $surveyToUpdate = \App\Survey::find($survey['id']);
-        if (array_key_exists('public', $survey)) {
-            if($survey['public'] == 'on') {
-                $public = 1;
-            }
+        if($surveyToUpdate->public == 1) {
+            $surveyToUpdate->update([
+                'title' => $survey['title']
+            ]);
         } else {
-            $public = 0;
+            if (array_key_exists('public', $survey)) {
+                if($survey['public'] == 'on' || $survey['public'] == "1") {
+                    $public = 1;
+                }
+            } else {
+                $public = 0;
+            }
+            $surveyToUpdate->update([
+                'title' => $survey['title'],
+                'public' => $public
+            ]);
         }
-        $surveyToUpdate->update([
-            'title' => $survey['title'],
-            'public' => $public
-        ]);
         if(array_key_exists('surveyParts', $survey)) {
             foreach ($survey['surveyParts'] as $surveyPartToUpdate) {
                 $surveyPart = \App\SurveyPart::find($surveyPartToUpdate['id']);
@@ -88,17 +96,36 @@ class Survey extends Controller
                     'title' => $surveyPartToUpdate['title']
                 ]);
                 if (array_key_exists('questions', $surveyPartToUpdate)) {
-                    foreach ($surveyPartToUpdate['questions'] as $questionToUpdate) {
-                        $question = \App\Question::find($questionToUpdate['id']);
-                        $question->update([
-                            'text' => $questionToUpdate['text']
-                        ]);
-                        if(array_key_exists('possibleAnswers', $questionToUpdate)) {
-                            foreach ($questionToUpdate['possibleAnswers'] as $possibleAnswerToUpdate) {
-                                $possibleAnswer = \App\PossibleAnswer::find($possibleAnswerToUpdate['id']);
-                                $possibleAnswer->update([
-                                    'text' => $possibleAnswerToUpdate['text']
-                                ]);
+                    if ($surveyToUpdate->public == 1) {
+                        foreach ($surveyPartToUpdate['questions'] as $questionToUpdate) {
+                            $question = \App\Question::find($questionToUpdate['id']);
+                            $question->update([
+                                'text' => $questionToUpdate['text'],
+                                'public' => 1
+                            ]);
+                            if(array_key_exists('possibleAnswers', $questionToUpdate)) {
+                                foreach ($questionToUpdate['possibleAnswers'] as $possibleAnswerToUpdate) {
+                                    $possibleAnswer = \App\PossibleAnswer::find($possibleAnswerToUpdate['id']);
+                                    $possibleAnswer->update([
+                                        'text' => $possibleAnswerToUpdate['text']
+                                    ]);
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        foreach ($surveyPartToUpdate['questions'] as $questionToUpdate) {
+                            $question = \App\Question::find($questionToUpdate['id']);
+                            $question->update([
+                                'text' => $questionToUpdate['text']
+                            ]);
+                            if(array_key_exists('possibleAnswers', $questionToUpdate)) {
+                                foreach ($questionToUpdate['possibleAnswers'] as $possibleAnswerToUpdate) {
+                                    $possibleAnswer = \App\PossibleAnswer::find($possibleAnswerToUpdate['id']);
+                                    $possibleAnswer->update([
+                                        'text' => $possibleAnswerToUpdate['text']
+                                    ]);
+                                }
                             }
                         }
                     }
@@ -133,7 +160,6 @@ class Survey extends Controller
                         ]);
                     }
                 }
-
             }
             if(array_key_exists('addPossibleAnswer', $command)) {
                 reset($command['addPossibleAnswer']);
@@ -153,15 +179,29 @@ class Survey extends Controller
                 }
             }
             if (array_key_exists('saveSurvey', $command)) {
-                foreach ($survey['userPool'] as $user) {
-                    $token = md5($survey['userPool'].$survey['id']);
-                    $surveyResult = \App\SurveyResult::create([
-                        'email' => $survey['userPool'],
-                        'token' => $token,
-                        'survey' => $survey['id']
+                $token = md5($request['survey']['userPool'].$request['survey']['id']);
+                $surveyResult = \App\SurveyResult::create([
+                    'email' => $request['survey']['userPool'],
+                    'token' => $token,
+                    'survey' => $request['survey']['id']
+                ]);
+                return redirect()->action('User@listSurvey');
+            }
+            if (array_key_exists('addQuestionFromQuestionPool', $command)) {
+                var_dump($command);
+                //die();
+                reset($command['addQuestionFromQuestionPool']);
+                foreach($command['addQuestionFromQuestionPool'] as $surveyPartKey => $questionId)  {
+                    $questionFromQuestionPool = \App\Question::find($questionId);
+                    $newQuestion = \App\Question::create([
+                        'text' => $questionFromQuestionPool->text,
+                        'survey_part' => $survey['surveyParts'][$surveyPartKey]['id']
+                    ]);
+                    $surveyPartToUpdate = \App\SurveyPart::find($survey['surveyParts'][$surveyPartKey]['id']);
+                    $surveyPartToUpdate->update([
+                        'questions' => count($surveyPartToUpdate->getQuestions()) + 1
                     ]);
                 }
-                return redirect()->action('User@listSurvey');
             }
         }
         return redirect()->action('Survey@editSurvey', ['id' => $surveyToUpdate->id]);

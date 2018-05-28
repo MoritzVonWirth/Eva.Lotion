@@ -10,7 +10,7 @@ class SurveyResult extends Controller
         $surveyResult = \App\SurveyResult::where('token', $token)->get();
         $surveyResult = $surveyResult->first();
         if ($surveyResult->processed == 1) {
-            return redirect('allReadyProcessed');
+            return redirect()->action('SurveyResult@allReadyProcessed');
         }
         $survey = \App\Survey::find($surveyResult->survey);
         return view('SurveyResult/DoSurvey', ['survey' => $survey, 'surveyResult' => $surveyResult->id]);

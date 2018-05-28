@@ -51,7 +51,11 @@
             <input type="hidden" name="_token" id="csrf-token" value="{{ Session::token() }}" />
             <input type="hidden" name="survey[id]" value="{{$survey['id']}}" />
             <p>Titel: <input type="text" name="survey[title]" value="{{$survey['title']}}"/></p>
-            <p>Öffentlich? <input type="checkbox" name="survey[public]" /></p>
+            @if($survey['public'] == 1)
+                <p>Öffentlich? <input type="checkbox" name="survey[public]" disabled checked/></p>
+            @else
+                <p>Öffentlich? <input type="checkbox" name="survey[public]" /></p>
+            @endif
             @if(isset($survey['surveyParts']) && count($survey['surveyParts']) > 0)
                 @for($i = 0; $i < count($survey['surveyParts']); $i++)
                     Fragenteil {{$i +1}}<br />
@@ -71,7 +75,13 @@
                                 <button type="submit" name="command[addPossibleAnswer][{{$i}}][{{$j}}][0]">Antwortmöglichkeit hinzufügen</button>
                             @endif
                         @endfor
-                        <button type="submit" name="command[addQuestion][{{$i}}][{{count($survey['surveyParts'][$i]['questions'])}}]">Frage hinzufügen</button>
+                            <select name="command[addQuestionFromQuestionPool][{{$i}}]">
+                                @foreach($questionsFromQuestionPool as $questionFromQuestionPool)
+                                    <option value="{{$questionFromQuestionPool->id}}">{{$questionFromQuestionPool->text}}</option>
+                                @endforeach
+                            </select>
+                            <button type="submit">Frage aus dem Fragenpool hinzufügen</button>
+                            <button type="submit" name="command[addQuestion][{{$i}}][{{count($survey['surveyParts'][$i]['questions'])}}]">Frage hinzufügen</button>
                     @else
                         <button type="submit" name="command[addQuestion][{{$i}}][0]">Frage hinzufügen</button>
                     @endif
@@ -81,15 +91,11 @@
                 <button type="submit" name="command[addPart][0]">Teil hinzufügen</button>
             @endif
 
-            <fieldset>
-                <label>Userkreis</label>
-                <select name="survey[userPool]">
-                    <option name="survey[userPool]" value="moritz.vonwirth@phth.de">Moritz</option>
-                    <option name="survey[userPool]" value="moritz.vonwirth@phth.de">Guess what... Moritz</option>
-                </select>
-
-            </fieldset>
-
+            <label>Userkreis</label>
+            <select name="survey[userPool]">
+                <option value="moritz.vonwirth@phth.de">Moritz</option>
+                <option value="moritz.vonwirth@phth.de">Guess what... Moritz</option>
+            </select>
             <button type="submit" name="command[saveSurvey]">Umfrage speichern</button>
 
         </form>
