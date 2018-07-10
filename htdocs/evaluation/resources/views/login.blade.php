@@ -1,60 +1,29 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Eva.Lotion</title>
-
-    <link href="//fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
-
-    <style>
-        html, body {
-            height: 100%;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            display: table;
-            font-weight: 100;
-            font-family: 'Arial';
-        }
-
-        .container {
-            text-align: center;
-            display: table-cell;
-            vertical-align: middle;
-        }
-
-        .content {
-            text-align: center;
-            display: inline-block;
-        }
-
-        .title {
-            font-size: 96px;
-        }
-
-        form {
-            width: 200%;
-            height: 200%;
-        }
-        button {
-            float: right;
-        }
-    </style>
-</head>
-<body>
-<div class="container">
-    <div class="content">
-        <form action="authenticate" method="post">
-            <input type="hidden" name="_token" id="csrf-token" value="{{ Session::token() }}" />
-            <p>Benutzername:</p>
-            <input type="text" name="name" />
-            <p>Passwort:</p>
-            <input type="password" name="password" /><br />
-            <button class="btn btn-success" type="submit">Einloggen</button>
-        </form>
+@extends('layouts.app')
+@section('content')
+<div class="login">
+    <div class="col-md-12">
+        <div class="col-md-6 mx-auto">
+            <!-- form card login -->
+            <div class="card rounded-0" id="login-form">
+                <div class="card-header">
+                    <h3 class="mb-0">Login</h3>
+                </div>
+                <div class="card-body">
+                    <form class="form" role="form" autocomplete="off" id="formLogin" method="POST" action="authenticate">
+                        <input type="hidden" name="_token" id="csrf-token" value="{{ Session::token() }}" />
+                        <div class="form-group">
+                            <label for="uname1">Benutzername</label>
+                            <input type="text" class="form-control form-control-lg rounded-0" name="name" id="uname1" required="">
+                        </div>
+                        <div class="form-group">
+                            <label>Passwort</label>
+                            <input type="password" class="form-control form-control-lg rounded-0" name="password" id="pwd1" required="">
+                        </div>
+                        <button type="submit" class="btn btn-success btn-lg float-right" id="btnLogin">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-</body>
-</html>
+@endsection

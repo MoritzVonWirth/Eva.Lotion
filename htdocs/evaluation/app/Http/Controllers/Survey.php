@@ -15,7 +15,8 @@ class Survey extends Controller
      */
     public function newSurvey() {
         $survey = new \App\Survey();
-        return view('Survey/newSurvey', array('survey' => $survey));
+        $userCircles = \App\UserCircle::all();
+        return view('Survey/newSurvey', array('survey' => $survey, 'userCircles' => $userCircles));
     }
 
     /**
@@ -34,6 +35,7 @@ class Survey extends Controller
             $public = 0;
         }
         $newSurvey = \App\Survey::create([
+            'author' => \Auth::user()->name,
             'title' => $survey['title'],
             'public' => $public
         ]);
@@ -64,7 +66,8 @@ class Survey extends Controller
         $survey = \App\Survey::find($id)->surveyToArray();
         $questionsFromQuestionPool = new \App\Question();
         $questionsFromQuestionPool = $questionsFromQuestionPool->getAllPublic();
-        return view('Survey/editSurvey', array('survey' => $survey, 'questionsFromQuestionPool' => $questionsFromQuestionPool));
+        $userCircles = \App\UserCircle::all();
+        return view('Survey/editSurvey', array('survey' => $survey, 'questionsFromQuestionPool' => $questionsFromQuestionPool, 'userCircles' => $userCircles));
     }
 
     public function updateSurvey(Request $request)
@@ -87,6 +90,16 @@ class Survey extends Controller
             $surveyToUpdate->update([
                 'title' => $survey['title'],
                 'public' => $public
+            ]);
+        }
+        if (array_key_exists('startDate', $survey)) {
+            $surveyToUpdate->update([
+                'start_date' => $survey['startDate']
+            ]);
+        }
+        if (array_key_exists('endDate', $survey)) {
+            $surveyToUpdate->update([
+                'end_date' => $survey['endDate']
             ]);
         }
         if(array_key_exists('surveyParts', $survey)) {
@@ -179,31 +192,100 @@ class Survey extends Controller
                 }
             }
             if (array_key_exists('saveSurvey', $command)) {
-                $token = md5($request['survey']['userPool'].$request['survey']['id']);
-                $surveyResult = \App\SurveyResult::create([
-                    'email' => $request['survey']['userPool'],
-                    'token' => $token,
-                    'survey' => $request['survey']['id']
-                ]);
+                $userCircle = $request['survey']['userPool'];
+                $userCircle = \App\UserCircle::find($userCircle);
+                $participants = $userCircle->getParticipants();
+                foreach ($participants as $participant) {
+                    $participant = $participant->first();
+                    $token = md5(sqrt(rand(1,100000)).$userCircle->id.sqrt(rand(1,100000)).$request['survey']['id'].decbin(rand(0,100000)).$participant->email.rand(0,100000));
+                    $surveyResult = \App\SurveyResult::create([
+                        'email' => $participant->email,
+                        'token' => $token,
+                        'survey' => $request['survey']['id']
+                    ]);
+                }
                 return redirect()->action('User@listSurvey');
             }
             if (array_key_exists('addQuestionFromQuestionPool', $command)) {
-                var_dump($command);
-                //die();
                 reset($command['addQuestionFromQuestionPool']);
                 foreach($command['addQuestionFromQuestionPool'] as $surveyPartKey => $questionId)  {
-                    $questionFromQuestionPool = \App\Question::find($questionId);
-                    $newQuestion = \App\Question::create([
-                        'text' => $questionFromQuestionPool->text,
-                        'survey_part' => $survey['surveyParts'][$surveyPartKey]['id']
-                    ]);
-                    $surveyPartToUpdate = \App\SurveyPart::find($survey['surveyParts'][$surveyPartKey]['id']);
-                    $surveyPartToUpdate->update([
-                        'questions' => count($surveyPartToUpdate->getQuestions()) + 1
-                    ]);
+                    if($questionId) {
+                        $questionFromQuestionPool = \App\Question::find($questionId);
+                        $newQuestion = \App\Question::create([
+                            'text' => $questionFromQuestionPool->text,
+                            'survey_part' => $survey['surveyParts'][$surveyPartKey]['id']
+                        ]);
+                        $surveyPartToUpdate = \App\SurveyPart::find($survey['surveyParts'][$surveyPartKey]['id']);
+                        $surveyPartToUpdate->update([
+                            'questions' => count($surveyPartToUpdate->getQuestions()) + 1
+                        ]);
+                    }
                 }
             }
         }
         return redirect()->action('Survey@editSurvey', ['id' => $surveyToUpdate->id]);
+    }
+
+    /**
+     * Sets a specific survey closed by its id
+     *
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function closeSurvey($id) {
+        $survey = \App\Survey::find($id);
+        $survey->update([
+           'is_closed' => 1
+        ]);
+        return redirect()->action('User@listSurvey');
+    }
+
+    /**
+     * Sets a specific survey as deleted by its id
+     *
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function deleteSurvey($id) {
+        $survey = \App\Survey::find($id);
+        $survey->update([
+            'deleted' => 1
+        ]);
+        return redirect()->action('User@listSurvey');
+    }
+
+    public function shareEvaluation($id) {
+        $surveyResults = \App\SurveyResult::where('survey', $id)->get();
+        $survey = \App\Survey::find($id);
+        $survey = $survey->surveyToArrayForEvaluation();
+        $attachment = View('evaluation/evaluationPDF', ['survey' => $survey])->render();
+        $attachment = preg_replace('/>\s+</', '><', $attachment);
+        $evaluation = new \Dompdf\Dompdf();
+        $evaluation->loadHtml($attachment);
+        $evaluation->setPaper('A4', 'portrait');
+        $evaluation->render();
+        $pdf = $evaluation->output();
+        //$evaluation->stream();
+        $attachment = new \Swift_Attachment(
+            $pdf,
+            'test.pdf',
+            'application/pdf'
+        );
+
+
+        foreach ($surveyResults as $surveyResult) {
+            $transport = (new \Swift_SmtpTransport('ein Host', 25))
+                ->setUsername('user')
+                ->setPassword('password')
+            ;
+            $mailer = new \Swift_Mailer($transport);
+            $message = (new \Swift_Message('Wonderful Subject'))
+                ->setFrom(['eine E-Mail Adresse' => 'Moritz von Wirth'])
+                ->setTo([$surveyResult->email , $surveyResult->email => $surveyResult->email])
+                ->setBody('' ,'text/html')
+                ->attach($attachment)
+            ;
+            $result = $mailer->send($message);
+        }
     }
 }

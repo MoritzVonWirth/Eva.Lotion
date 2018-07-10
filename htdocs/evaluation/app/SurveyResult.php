@@ -11,17 +11,23 @@ class SurveyResult extends BaseModel
     protected $fillable = array('email', 'survey', 'token', 'email', 'answers', 'processed');
 
     public function sendToken() {
-        $transport = (new \Swift_SmtpTransport('wp10624023.mailout.server-he.de', 25))
-            ->setUsername('wp10624023-mvwirth')
-            ->setPassword('747002aa!')
+        $transport = (new \Swift_SmtpTransport('ein host', 25))
+            ->setUsername('user')
+            ->setPassword('password')
         ;
 
         $mailer = new \Swift_Mailer($transport);
-
+        $payload = '<html>'.
+            '<body>'.
+            '<a href="localhost:41225/survey/'.$this->token.'">Klick!</a>'.
+            '</body>'.
+            '</html>';
+        var_dump($payload);
+        //die();
         $message = (new \Swift_Message('Wonderful Subject'))
-            ->setFrom(['moritz.vonwirth@phth.de' => 'Moritz von Wirth'])
+            ->setFrom(['eine E-mail Adresse' => 'Moritz von Wirth'])
             ->setTo([$this->email , $this->email => $this->email])
-            ->setBody('localhost:41225/survey/'.$this->token)
+            ->setBody($payload, 'text/html')
         ;
 
 // Send the message

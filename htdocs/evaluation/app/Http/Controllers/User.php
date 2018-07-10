@@ -49,8 +49,7 @@ class User extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function listSurvey() {
-        $surveys = new Survey();
-        $surveys = $surveys::all();
+        $surveys = \App\Survey::where('deleted', '=', 0)->get();
         return view('User/listSurvey', ['surveys' => $surveys]);
     }
 }

@@ -1,0 +1,77 @@
+.main {
+    margin: 25px 50px 0 50px;
+}
+.main label {
+    font-weight: 700;
+}
+.main .login {
+    width: 50%;
+    margin: auto;
+}
+.main .listSurvey .navbar-brand {
+    color: black;
+    font-weight: bold;
+}
+.main .listSurvey .logout {
+    color: white;
+}
+.main .listSurvey table thead th {
+    text-align: center;
+}
+.main .listSurvey table tbody tr td {
+    text-align: center;
+}
+.main .listSurvey table tbody tr td .active {
+    color: black;
+}
+.main .listSurvey table tbody tr td .deactivated {
+    color: lightgray;
+}
+.main .newSurvey .back {
+    float: left;
+}
+.main .newSurvey .col-lg-6 {
+    margin: auto;
+}
+.main .editSurvey .back {
+    float: left;
+}
+.main .editSurvey .col-lg-6 {
+    margin: auto;
+}
+.main .showEvaluation .col-lg-6 {
+    margin: auto;
+}
+.main .showEvaluation table .link {
+    text-align: center;
+}
+.main .showEvaluation table tbody tr td .active {
+    color: black;
+}
+.main .showEvaluation table tbody tr td .deactivated {
+    color: lightgray;
+}
+.main .showEvaluation .btn-success {
+    float: right;
+}
+.main .showEvaluationStatistic .back {
+    float: left;
+}
+.main .showEvaluationStatistic .col-lg-6 {
+    margin: auto;
+}
+.main .processedSuccessfully .col-lg-6 {
+    text-align: center;
+    margin: auto;
+}
+.main .allReadyProcessed .col-lg-6 {
+    text-align: center;
+    margin: auto;
+}
+.evaluationPDF {
+    margin: 20px 20px 20px 20px;
+}
+.evaluationPDF h1 {
+    text-align: center;
+}
+

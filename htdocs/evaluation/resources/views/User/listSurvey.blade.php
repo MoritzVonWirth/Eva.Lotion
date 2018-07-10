@@ -1,94 +1,77 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Eva.Lotion</title>
-
-    <link href="//fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
-
-    <style>
-        html, body {
-            height: 100%;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            display: table;
-            font-weight: 100;
-            font-family: 'Arial';
-        }
-
-        .container {
-            display: table-cell;
-        }
-
-        .header {
-            text-align: right;
-            margin: 20px 20px;
-        }
-
-        .content {
-            text-align: center;
-            display: inline-block;
-        }
-
-        .title {
-            font-size: 96px;
-        }
-
-        form {
-            width: 200%;
-            height: 200%;
-        }
-        button {
-            float: right;
-        }
-    </style>
-</head>
-<body>
-<div class="container">
-    <div class="header">
-        <a href="/logout">Ausloggen</a>
-    </div>
-    <div class="content">
-        <table>
-            <thead>
-                <th>Umfrage</th>
-                <th>Status</th>
-                <th>Start Datum</th>
-                <th>End Datum</th>
-                <th>Userkreis</th>
-                <th>Fortschritt</th>
-                <th>Bearbeiten</th>
-                <th>Schließen</th>
-                <th>Auswertung</th>
-                <th>Löschen</th>
-                <th>Ergebnisse teilen</th>
-            </thead>
-            <body>
-                @foreach($surveys as $survey)
-                    <tr>
-                        <td>{{$survey->title}}</td>
-                        <td>Status</td>
-                        <td>Start Datum</td>
-                        <td>End Datum</td>
-                        <td>Userkreis</td>
-                        <td>Fortschritt</td>
-                        <td><a href="/editSurvey/{{$survey->id}}" >x</a></td>
-                        <td>x</td>
-                        <td>x</td>
-                        <td>x</td>
-                        <td>share</td>
-                    </tr>
-                @endforeach
-            </body>
-        </table>
-        <form action="newSurvey" method="post">
-            <input type="hidden" name="_token" id="csrf-token" value="{{ Session::token() }}" />
-            <button type="submit">Neue Umfrage erstellen</button>
-        </form>
-    </div>
+@extends('layouts.app')
+@section('content')
+<div class="listSurvey">
+    <nav class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/listSurvey"><h2>Eva.Lotion</h2></a>
+        </div>
+        <ul class="nav navbar-top-links navbar-right">
+            <li class="btn btn-danger"><a class="logout" href="/logout">Ausloggen</a></li>
+        </ul>
+    </nav>
+    <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+        <thead>
+            <th>Umfrage</th>
+            <th>Status</th>
+            <th>Start Datum</th>
+            <th>End Datum</th>
+            <th>Userkreis</th>
+            <th>Fortschritt</th>
+            <th>Bearbeiten</th>
+            <th>Schließen</th>
+            <th>Auswertung</th>
+            <th>Löschen</th>
+            <th>Ergebnisse teilen</th>
+        </thead>
+        <tbody>
+            @foreach($surveys as $survey)
+                <tr>
+                    <td>{{$survey->title}}</td>
+                    <td>Status</td>
+                    @if($survey->getFormattedStartDate())
+                        <td>{{$survey->getFormattedStartDate()}}</td>
+                    @else
+                        <td></td>
+                    @endif
+                    @if($survey->getFormattedEndDate())
+                        <td>{{$survey->getFormattedEndDate()}}</td>
+                    @else
+                        <td></td>
+                    @endif
+                    <td>Userkreis</td>
+                    <td>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: {{$survey->getProgress()}}%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </td>
+                    @if($survey->is_closed)
+                        <td><span class="fas fa-edit fa-2x deactivated"></span></td>
+                    @else
+                        <td><a href="/editSurvey/{{$survey->id}}"><span class="fas fa-edit fa-2x active"></span></a></td>
+                    @endif
+                    @if($survey->is_closed)
+                        <td><span class="fas fa-window-close fa-2x deactivated"></span></td>
+                    @else
+                        <td><a href="/closeSurvey/{{$survey->id}}" ><span class="fas fa-window-close fa-2x active"></span></a></td>
+                    @endif
+                    @if($survey->is_closed)
+                        <td><a href="/showEvaluation/{{$survey->id}}" ><span class="fas fa-bell fa-2x active"></span></a></td>
+                    @else
+                        <td><span class="fas fa-bell fa-2x deactivated"></span></td>
+                    @endif
+                    <td><a href="/deleteSurvey/{{$survey->id}}" ><span class="fas fa-trash-alt fa-2x active"></span></a></td>
+                    @if($survey->is_closed)
+                        <td><a href="/shareEvaluation/{{$survey->id}}" ><span class="fas fa-share-alt-square fa-2x active"></span></a></td>
+                    @else
+                        <td><span class="fas fa-share-alt-square fa-2x deactivated"></span></td>
+                    @endif
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+    <form action="newSurvey" method="post">
+        <input type="hidden" name="_token" id="csrf-token" value="{{ Session::token() }}" />
+        <button class="btn btn-primary" type="submit"><i class="fas fa-file"></i> Neue Umfrage erstellen</button>
+    </form>
 </div>
-</body>
-</html>
+@endsection
